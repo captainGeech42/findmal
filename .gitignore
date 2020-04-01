@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+findmal
 
 # Test binary, built with `go test -c`
 *.test
