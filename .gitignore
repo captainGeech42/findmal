@@ -14,3 +14,7 @@ findmal
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# Config file
+findmal.json
+config.json
