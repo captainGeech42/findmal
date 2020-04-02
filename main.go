@@ -9,7 +9,7 @@ import (
 
 var sources []MalwareSourcer
 var config map[string]interface{}
-var results []SearchResult
+var downloadSamples bool
 
 // https://stackoverflow.com/a/31873508
 func usage() {
@@ -23,6 +23,7 @@ func main() {
 	downloadParam := flag.Bool("download", false, "Download malware sample (if found)")
 	flag.Usage = usage
 	flag.Parse()
+	downloadSamples = *downloadParam
 
 	if flag.NArg() == 0 {
 		flag.Usage()
@@ -36,8 +37,34 @@ func main() {
 	addSources()
 	log.Printf("Loaded %d malware source(s)\n", len(sources))
 
+	results := getSamples(flag.Args())
+	printResults(results)
+}
+
+// Add sources that support any hash type first, then the specific ones
+func addSources() {
+	// VirusTotal
+	if configHasKey("VT_API_KEY") {
+		sources = append(sources, &VirusTotal{MalwareSource{Name: "VirusTotal"}})
+	}
+
+	// MalwareBazaar
+	if configHasKey("MB_API_KEY") {
+		sources = append(sources, &MalwareBazaar{MalwareSource{Name: "MalwareBazaar"}})
+	}
+
+	// Hybrid Analysis
+	// SHA256 only
+	if configHasKey("HA_API_KEY") {
+		sources = append(sources, &HybridAnalysis{MalwareSource{Name: "Hybrid Analysis"}})
+	}
+}
+
+func getSamples(hashes []string) []SearchResult {
+	var results []SearchResult
+
 	// search/download all hashes
-	for _, hash := range flag.Args() {
+	for _, hash := range hashes {
 		// duplicate the master source list so we can properly track the source states for each hash
 		sourcesForHash := make([]MalwareSourcer, len(sources))
 		copy(sourcesForHash, sources)
@@ -69,7 +96,7 @@ func main() {
 
 			// download the file iff user wants downloads, we haven't downloaded this file,
 			// and we can download from this source
-			if *downloadParam && !result.Downloaded && src.GetCanDownload() {
+			if downloadSamples && !result.Downloaded && src.GetCanDownload() {
 				log.Printf("Downloading %s from %s\n", hash, src.GetName())
 				ok := src.DownloadFile(result.Sample)
 				if ok {
@@ -83,6 +110,10 @@ func main() {
 		results = append(results, result)
 	}
 
+	return results
+}
+
+func printResults(results []SearchResult) {
 	// print output for user
 	for _, r := range results {
 		fmt.Printf("\n======= Results for %s =======\n", r.Sample.UserHash)
@@ -123,27 +154,8 @@ func main() {
 
 		if r.Downloaded {
 			fmt.Printf("Sample was downloaded to %s.bin\n", r.Sample.UserHash)
-		} else if *downloadParam {
+		} else if downloadSamples {
 			fmt.Println("Unable to download sample as requested (see log above for more details)")
 		}
-	}
-}
-
-// Add sources that support any hash type first, then the specific ones
-func addSources() {
-	// VirusTotal
-	if configHasKey("VT_API_KEY") {
-		sources = append(sources, &VirusTotal{MalwareSource{Name: "VirusTotal"}})
-	}
-
-	// MalwareBazaar
-	if configHasKey("MB_API_KEY") {
-		sources = append(sources, &MalwareBazaar{MalwareSource{Name: "MalwareBazaar"}})
-	}
-
-	// Hybrid Analysis
-	// SHA256 only
-	if configHasKey("HA_API_KEY") {
-		sources = append(sources, &HybridAnalysis{MalwareSource{Name: "Hybrid Analysis"}})
 	}
 }
