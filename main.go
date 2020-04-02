@@ -30,7 +30,7 @@ func main() {
 	config = loadConfig()
 
 	addSources()
-	log.Printf("Loaded %d malware sources\n", len(sources))
+	log.Printf("Loaded %d malware source(s)\n", len(sources))
 
 	for _, hash := range flag.Args() {
 		// duplicate the master source list so we can properly track the source states for each hash
