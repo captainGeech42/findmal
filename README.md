@@ -3,6 +3,20 @@
 
 A tool to find/download malware samples from various public repositories
 
+Currently supports:
+
+* VirusTotal
+
+In the future, will (probably) support:
+
+* any.run
+* Hybrid Analysis
+* VirusShare
+* MalwareBazaar
+* VirusBay
+* CAPE Sandbox (the public one)
+* Intezer Analyze
+
 ## Install
 
 1. `go get github.com/captainGeech42/findmal`
