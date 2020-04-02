@@ -5,7 +5,8 @@ A tool to find/download malware samples from various public repositories
 
 Currently supports:
 
-* VirusTotal
+* VirusTotal (search only)
+* Hybrid Analysis (search only, download coming soon)
 
 In the future, will (probably) support:
 
@@ -68,3 +69,5 @@ Put your key in the config file as the `VT_API_KEY` value.
 Go to your [profile page](https://www.hybrid-analysis.com/my-account?tab=%23api-key-tab) and click `Create API key`.
 
 `findmal` uses the Hybrid Analysis API v2, and only needs the `API Key` value. Put it in as the `HA_API_KEY` value.
+
+In order to download files from Hybrid Analysis, you must be a 'vetted' research. You can start the vetting process by clicking on `Upgrade API key` on the profile page linked above, and filling out the form.
