@@ -51,6 +51,7 @@ func (src *VirusTotal) FindFile(hash string) {
 
 	if _, ok := jsonData["data"]; ok {
 		src.HasFile = true
+		src.URL = fmt.Sprintf("https://www.virustotal.com/gui/file/%s/details", hash)
 	} else if _, ok := jsonData["error"]; !ok {
 		// error key didn't exist
 		log.Printf("Got an unknown response from VT")

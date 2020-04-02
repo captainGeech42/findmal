@@ -63,6 +63,7 @@ func (src *HybridAnalysis) FindFile(hash string) {
 	if val := jsonData["sha256"]; val.(string) == hash {
 		src.HasFile = true
 		src.CanDownload = true
+		src.URL = fmt.Sprintf("https://www.hybrid-analysis.com/sample/%s", hash)
 	} else {
 		log.Printf("Got an unknown response from HA")
 	}
