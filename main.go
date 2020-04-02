@@ -63,4 +63,8 @@ func addSources() {
 	if configHasKey("VT_API_KEY") {
 		sources = append(sources, &VirusTotal{MalwareSource{Name: "VirusTotal"}})
 	}
+
+	if configHasKey("HA_API_KEY") {
+		sources = append(sources, &HybridAnalysis{MalwareSource{Name: "Hybrid Analysis"}})
+	}
 }

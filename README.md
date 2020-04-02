@@ -27,6 +27,8 @@ Unsupported:
     - If `~/.config/findmal.json` isn't found, `findmal` will also check your current directory for a `findmal.json` file.
 3. Fill in the appropriate API keys
 
+If you don't have API access and/or wish to not use a source, either remove the key from the JSON file or leave the value blank. `findmal` will ignore that source.
+
 ## Usage
 ```
 $ findmal 
@@ -51,7 +53,9 @@ $ findmal hash1 hash2 hash3
 $ findmal -download hash1 hash2 hash3
 ```
 
-You can provide a MD5, SHA1, or a SHA256 (or some combination).
+You can provide a MD5, SHA1, or a SHA256 (or some combination). Please note that not all sources may support all hash types (a message will be printed when attempting to search a source with an invalid hash type)
+
+When downloading a sample (by providing the `-download` argument), the sample is saved to `./[hash].bin`.
 
 ## Where are my API keys, and where do I put them?
 
@@ -59,3 +63,8 @@ You can provide a MD5, SHA1, or a SHA256 (or some combination).
 Sign in to [VirusTotal](https://www.virustotal.com/), click on your name (top-right corner), select `API key`.
 
 Put your key in the config file as the `VT_API_KEY` value.
+
+### Hybrid Analysis
+Go to your [profile page](https://www.hybrid-analysis.com/my-account?tab=%23api-key-tab) and click `Create API key`.
+
+`findmal` uses the Hybrid Analysis API v2, and only needs the `API Key` value. Put it in as the `HA_API_KEY` value.
