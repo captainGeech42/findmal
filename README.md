@@ -70,4 +70,4 @@ Go to your [profile page](https://www.hybrid-analysis.com/my-account?tab=%23api-
 
 `findmal` uses the Hybrid Analysis API v2, and only needs the `API Key` value. Put it in as the `HA_API_KEY` value.
 
-In order to download files from Hybrid Analysis, you must be a 'vetted' research. You can start the vetting process by clicking on `Upgrade API key` on the profile page linked above, and filling out the form.
+In order to download files from Hybrid Analysis, you must be a 'vetted' researcher. You can start the vetting process by clicking on `Upgrade API key` on the profile page linked above, and filling out the form.
