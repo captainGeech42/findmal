@@ -99,4 +99,9 @@ func addSources() {
 	if configHasKey("HA_API_KEY") {
 		sources = append(sources, &HybridAnalysis{MalwareSource{Name: "Hybrid Analysis"}})
 	}
+
+	// MalwareBazaar
+	if configHasKey("MB_API_KEY") {
+		sources = append(sources, &MalwareBazaar{MalwareSource{Name: "MalwareBazaar"}})
+	}
 }

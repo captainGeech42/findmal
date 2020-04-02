@@ -7,12 +7,11 @@ Currently supports:
 
 * VirusTotal (search only)
 * Hybrid Analysis (search only, download coming soon)
+* MalwareBazaar
 
 In the future, will (probably) support:
 
-* Hybrid Analysis
 * VirusShare
-* MalwareBazaar
 * VirusBay
 * CAPE Sandbox (the public one)
 * Intezer Analyze
@@ -22,7 +21,6 @@ Unsupported:
 * any.run (requires paid API)
 
 ## Install
-
 1. `go get github.com/captainGeech42/findmal`
 2. Copy `config.ex.json` to `~/.config/findmal.json`
     - If `~/.config/findmal.json` isn't found, `findmal` will also check your current directory for a `findmal.json` file.
@@ -71,3 +69,8 @@ Go to your [profile page](https://www.hybrid-analysis.com/my-account?tab=%23api-
 `findmal` uses the Hybrid Analysis API v2, and only needs the `API Key` value. Put it in as the `HA_API_KEY` value.
 
 In order to download files from Hybrid Analysis, you must be a 'vetted' researcher. You can start the vetting process by clicking on `Upgrade API key` on the profile page linked above, and filling out the form.
+
+### MalwareBazaar
+Go to your [account page](https://bazaar.abuse.ch/account/), your API key is listed there.
+
+Put your key in the config file as the `MB_API_KEY` value.
