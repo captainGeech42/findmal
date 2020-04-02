@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
@@ -13,7 +13,7 @@ func loadConfig() map[string]interface{} {
 	// try from ~/.config/findmal.json
 	path, err := homedir.Expand("~/.config/findmal.json")
 	if err != nil {
-		fmt.Errorf("failed to get home directory")
+		log.Printf("failed to get home directory")
 		os.Exit(-1)
 	}
 
@@ -26,15 +26,16 @@ func loadConfig() map[string]interface{} {
 
 		if err != nil {
 			// couldn't find it in current dir
-			fmt.Errorf("couldn't find config file")
+			log.Printf("couldn't find config file")
 			os.Exit(-1)
 		}
 	}
 
+	// https://blog.golang.org/json#TOC_5.
 	var config interface{}
 	err = json.Unmarshal(dat, &config)
 	if err != nil {
-		fmt.Errorf("failed to parse config")
+		log.Printf("failed to parse config")
 		os.Exit(-1)
 	}
 

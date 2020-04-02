@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -17,8 +18,6 @@ func usage() {
 }
 
 func main() {
-	fmt.Println("Hello world!")
-
 	downloadParam := flag.Bool("download", false, "Download malware sample (if found)")
 	flag.Usage = usage
 	flag.Parse()
@@ -28,29 +27,40 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Download? %v\n", *downloadParam)
-	fmt.Println(flag.Args())
-
 	config = loadConfig()
 
 	addSources()
+	log.Printf("Loaded %d malware sources\n", len(sources))
 
 	for _, hash := range flag.Args() {
 		// duplicate the master source list so we can properly track the source states for each hash
 		sourcesForHash := make([]MalwareSourcer, len(sources))
 		copy(sourcesForHash, sources)
 
+		// track if downloaded yet
+		downloaded := false
+
 		for _, src := range sources {
+			log.Printf("Searching %s for %s\n", src.GetName(), hash)
 			src.FindFile(hash)
-			fmt.Println(src.GetHasFile())
-			src.DownloadFile(hash)
-			fmt.Println(src.GetHasFile())
+
+			if src.GetHasFile() {
+				log.Printf("%s has %s\n", src.GetName(), hash)
+			}
+
+			// download the file iff user wants downloads, we haven't downloaded this file,
+			// and we can download from this source
+			if *downloadParam && !downloaded && src.GetCanDownload() {
+				log.Printf("Downloading %s from %s\n", hash, src.GetName())
+				src.DownloadFile(hash)
+				downloaded = true
+			}
 		}
 	}
 }
 
 func addSources() {
 	if configHasKey("VT_API_KEY") {
-		sources = append(sources, &VirusTotal{})
+		sources = append(sources, &VirusTotal{MalwareSource{Name: "VirusTotal"}})
 	}
 }
