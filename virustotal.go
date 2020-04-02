@@ -48,7 +48,6 @@ func (src *VirusTotal) FindFile(hash string) {
 
 	// if there is a top level 'data' key, the file exists
 	// if there is a top level 'error' key, the file doesn't exist
-
 	if _, ok := jsonData["data"]; ok {
 		src.HasFile = true
 		src.URL = fmt.Sprintf("https://www.virustotal.com/gui/file/%s/details", hash)
