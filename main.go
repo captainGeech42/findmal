@@ -45,10 +45,12 @@ func main() {
 		// store result info
 		result := SearchResult{Hash: hash}
 
+		// search/download our file on our sources
 		for _, src := range sources {
 			log.Printf("Searching %s for %s\n", src.GetName(), hash)
 			src.FindFile(hash)
 
+			// source has file
 			if src.GetHasFile() {
 				log.Printf("%s has %s\n", src.GetName(), hash)
 				result.URLs = append(result.URLs, src.GetURL())
@@ -80,6 +82,7 @@ func main() {
 		for _, url := range r.URLs {
 			fmt.Printf("\t%s\n", url)
 		}
+
 		if r.Downloaded {
 			fmt.Printf("Sample was downloaded to %s.bin\n", r.Hash)
 		}
