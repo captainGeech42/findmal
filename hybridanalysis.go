@@ -71,7 +71,7 @@ func (src *HybridAnalysis) FindFile(hash string) {
 
 // DownloadFile implementation for HA
 // https://www.hybrid-analysis.com/docs/api/v2#/Sandbox_Report/get_report__id__sample
-func (src *HybridAnalysis) DownloadFile(hash string) {
+func (src *HybridAnalysis) DownloadFile(hash string) bool {
 	log.Println("Downloading from HA not yet supported")
-	return
+	return false
 }

@@ -60,8 +60,11 @@ func main() {
 			// and we can download from this source
 			if *downloadParam && !result.Downloaded && src.GetCanDownload() {
 				log.Printf("Downloading %s from %s\n", hash, src.GetName())
-				src.DownloadFile(hash)
-				result.Downloaded = true
+				ok := src.DownloadFile(hash)
+				if ok {
+					log.Printf("Successfully downloaded %s from %s\n", hash, src.GetName())
+				}
+				result.Downloaded = ok
 			}
 		}
 
@@ -85,6 +88,8 @@ func main() {
 
 		if r.Downloaded {
 			fmt.Printf("Sample was downloaded to %s.bin\n", r.Hash)
+		} else if *downloadParam {
+			fmt.Println("Unable to download sample as requested (see log above for more details)")
 		}
 	}
 }

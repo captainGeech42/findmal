@@ -59,6 +59,6 @@ func (src *VirusTotal) FindFile(hash string) {
 
 // DownloadFile implementation for VT
 // Not able to download files
-func (src *VirusTotal) DownloadFile(hash string) {
-	return
+func (src *VirusTotal) DownloadFile(hash string) bool {
+	return false
 }
