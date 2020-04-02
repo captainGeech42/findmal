@@ -15,18 +15,18 @@ type HybridAnalysis struct {
 
 // FindFile implementation for HA
 // https://www.hybrid-analysis.com/docs/api/v2#/Analysis_Overview/get_overview__sha256_
-func (src *HybridAnalysis) FindFile(hash string) {
+func (src *HybridAnalysis) FindFile(sample *Sample) {
 	// default not found
 	src.CanDownload = false
 	src.HasFile = false
 
-	if !HashIsSHA256(hash) {
+	if sample.SHA256 == "" {
 		log.Printf("Hash type is unsupported, Hybrid Analysis requires SHA256")
 		return
 	}
 
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", fmt.Sprintf("https://www.hybrid-analysis.com/api/v2/overview/%s", hash), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("https://www.hybrid-analysis.com/api/v2/overview/%s", sample.SHA256), nil)
 	req.Header.Add("api-key", config["HA_API_KEY"].(string))
 	req.Header.Add("User-Agent", "Falcon") // suggested by the API docs to avoid UA blacklists
 
@@ -60,10 +60,10 @@ func (src *HybridAnalysis) FindFile(hash string) {
 	// if the top-level key 'message' == 'Not Found', file doesn't exist
 	// not found already handled by 404 above
 
-	if val := jsonData["sha256"]; val.(string) == hash {
+	if val := jsonData["sha256"]; val.(string) == sample.SHA256 {
 		src.HasFile = true
 		src.CanDownload = true
-		src.URL = fmt.Sprintf("https://www.hybrid-analysis.com/sample/%s", hash)
+		src.URL = fmt.Sprintf("https://www.hybrid-analysis.com/sample/%s", sample.SHA256)
 	} else {
 		log.Printf("Got an unknown response from HA")
 	}
@@ -71,7 +71,7 @@ func (src *HybridAnalysis) FindFile(hash string) {
 
 // DownloadFile implementation for HA
 // https://www.hybrid-analysis.com/docs/api/v2#/Sandbox_Report/get_report__id__sample
-func (src *HybridAnalysis) DownloadFile(hash string) bool {
+func (src *HybridAnalysis) DownloadFile(sample Sample) bool {
 	log.Println("Downloading from HA not yet supported")
 	return false
 }

@@ -6,6 +6,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
+
+	"github.com/tidwall/gjson"
 )
 
 // VirusTotal struct implementation
@@ -15,7 +18,7 @@ type VirusTotal struct {
 
 // FindFile implementation for VT
 // https://developers.virustotal.com/v3.0/reference#file-info
-func (src *VirusTotal) FindFile(hash string) {
+func (src *VirusTotal) FindFile(sample *Sample) {
 	// can't download files from VT, too much $$$, rip
 	src.CanDownload = false
 
@@ -23,7 +26,7 @@ func (src *VirusTotal) FindFile(hash string) {
 	src.HasFile = false
 
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", fmt.Sprintf("https://www.virustotal.com/api/v3/files/%s", hash), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("https://www.virustotal.com/api/v3/files/%s", sample.UserHash), nil)
 	req.Header.Add("x-apikey", config["VT_API_KEY"].(string))
 
 	resp, err := client.Do(req)
@@ -50,7 +53,16 @@ func (src *VirusTotal) FindFile(hash string) {
 	// if there is a top level 'error' key, the file doesn't exist
 	if _, ok := jsonData["data"]; ok {
 		src.HasFile = true
-		src.URL = fmt.Sprintf("https://www.virustotal.com/gui/file/%s/details", hash)
+		src.URL = fmt.Sprintf("https://www.virustotal.com/gui/file/%s/details", sample.UserHash)
+
+		// save hashes
+		// since data is the same, it's ok to overwrite Sample members
+		sha256 := strings.Trim(string(gjson.GetBytes(body, "data.sha256").Raw), "\"")
+		sha1 := strings.Trim(string(gjson.GetBytes(body, "data.sha1").Raw), "\"")
+		md5 := strings.Trim(string(gjson.GetBytes(body, "data.md5").Raw), "\"")
+		sample.MD5 = md5
+		sample.SHA1 = sha1
+		sample.SHA256 = sha256
 	} else if _, ok := jsonData["error"]; !ok {
 		// error key didn't exist
 		log.Printf("Got an unknown response from VT")
@@ -59,6 +71,6 @@ func (src *VirusTotal) FindFile(hash string) {
 
 // DownloadFile implementation for VT
 // Not able to download files
-func (src *VirusTotal) DownloadFile(hash string) bool {
+func (src *VirusTotal) DownloadFile(sample Sample) bool {
 	return false
 }
