@@ -9,13 +9,16 @@ Currently supports:
 
 In the future, will (probably) support:
 
-* any.run
 * Hybrid Analysis
 * VirusShare
 * MalwareBazaar
 * VirusBay
 * CAPE Sandbox (the public one)
 * Intezer Analyze
+
+Unsupported:
+
+* any.run (requires paid API)
 
 ## Install
 
