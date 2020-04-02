@@ -7,7 +7,7 @@ Currently supports:
 
 * VirusTotal (search only)
 * Hybrid Analysis (search only, download coming soon)
-* MalwareBazaar
+* MalwareBazaar (search only, download coming soon)
 
 In the future, will (probably) support:
 
@@ -50,6 +50,22 @@ $ findmal hash1 hash2 hash3
 
 # search for and download hash[1,2,3]
 $ findmal -download hash1 hash2 hash3
+```
+
+Example output:
+```
+$ findmal 8ee9a2f9ec53d863745fda55919d3a0af5265716
+[log snipped]
+
+======= Results for 8ee9a2f9ec53d863745fda55919d3a0af5265716 =======
+Sample Info:
+        MD5: bf2a9c3b5493ce819152f1c3caa67202
+        SHA1: 8ee9a2f9ec53d863745fda55919d3a0af5265716
+        SHA256: b5c24d94b63f844c5350bedb4312499887b61490b2080a98611c28320c3a7274
+Analysis info available at the following URLs:
+        https://www.virustotal.com/gui/file/8ee9a2f9ec53d863745fda55919d3a0af5265716/details
+        https://bazaar.abuse.ch/sample/b5c24d94b63f844c5350bedb4312499887b61490b2080a98611c28320c3a7274/
+        https://www.hybrid-analysis.com/sample/b5c24d94b63f844c5350bedb4312499887b61490b2080a98611c28320c3a7274
 ```
 
 You can provide a MD5, SHA1, or a SHA256 (or some combination). Please note that not all sources may support all hash types (a message will be printed when attempting to search a source with an invalid hash type)
