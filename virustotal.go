@@ -57,9 +57,9 @@ func (src *VirusTotal) FindFile(sample *Sample) {
 
 		// save hashes
 		// since data is the same, it's ok to overwrite Sample members
-		sha256 := strings.Trim(string(gjson.GetBytes(body, "data.sha256").Raw), "\"")
-		sha1 := strings.Trim(string(gjson.GetBytes(body, "data.sha1").Raw), "\"")
-		md5 := strings.Trim(string(gjson.GetBytes(body, "data.md5").Raw), "\"")
+		sha256 := strings.Trim(string(gjson.GetBytes(body, "data.attributes.sha256").Raw), "\"")
+		sha1 := strings.Trim(string(gjson.GetBytes(body, "data.attributes.sha1").Raw), "\"")
+		md5 := strings.Trim(string(gjson.GetBytes(body, "data.attributes.md5").Raw), "\"")
 		sample.MD5 = md5
 		sample.SHA1 = sha1
 		sample.SHA256 = sha256
