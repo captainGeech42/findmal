@@ -70,7 +70,7 @@ Analysis info available at the following URLs:
 
 You can provide a MD5, SHA1, or a SHA256 (or some combination). Please note that not all sources may support all hash types (a message will be printed when attempting to search a source with an invalid hash type). However, if the sample is found on a source, `findmal` will save the MD5, SHA1, and SHA256 for later use on those platforms which only support a certain type.
 
-When downloading a sample (by providing the `-download` argument), the sample is saved to `./[hash].bin`.
+When downloading a sample (by providing the `-download` argument), the sample is saved to `./[hash].zip` (password is `infected`).
 
 ## Where are my API keys, and where do I put them?
 
