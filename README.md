@@ -7,7 +7,7 @@ Currently supports:
 
 * VirusTotal (search only)
 * Hybrid Analysis (search only, download coming soon)
-* MalwareBazaar (search only, download coming soon)
+* MalwareBazaar (search and download)
 
 In the future, will (probably) support:
 
@@ -89,4 +89,4 @@ In order to download files from Hybrid Analysis, you must be a 'vetted' research
 ### MalwareBazaar
 Go to your [account page](https://bazaar.abuse.ch/account/), your API key is listed there.
 
-Put your key in the config file as the `MB_API_KEY` value.
+Put your key in the config file as the `MB_API_KEY` value. (Note: this API key isn't required, as MalwareBazaar only requires an API key for submitting files. Therefore, you can put any non-blank value to enable this source if you wish)

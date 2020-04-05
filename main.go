@@ -153,7 +153,7 @@ func printResults(results []SearchResult) {
 		}
 
 		if r.Downloaded {
-			fmt.Printf("Sample was downloaded to %s.bin\n", r.Sample.UserHash)
+			fmt.Printf("Sample was downloaded to %s.zip (password is \"infected\")\n", r.Sample.UserHash)
 		} else if downloadSamples {
 			fmt.Println("Unable to download sample as requested (see log above for more details)")
 		}
