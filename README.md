@@ -13,7 +13,6 @@ In the future, will (probably) support:
 
 * VirusShare
 * VirusBay
-* Intezer Analyze
 
 Unsupported:
 
