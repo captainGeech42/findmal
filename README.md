@@ -12,13 +12,13 @@ Currently supports:
 In the future, will (probably) support:
 
 * VirusShare
-* VirusBay
 
 Unsupported:
 
 * any.run (requires paid API)
 * CAPE Sandbox (the public instance doesn't allow API key generation)
 * Intezer Analyze (API doesn't allow searching by hash)
+* VirusBay (no API)
 
 ## Install
 1. `go get github.com/captainGeech42/findmal`
