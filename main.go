@@ -101,8 +101,15 @@ func getSamples(hashes []string) []SearchResult {
 				ok := src.DownloadFile(result.Sample)
 				if ok {
 					log.Printf("Successfully downloaded %s from %s\n", hash, src.GetName())
+				} else {
+					log.Printf("Unable to download %s from %s: Error\n", hash, src.GetName())
 				}
 				result.Downloaded = ok
+			} else if downloadSamples && !result.Downloaded && !src.GetCanDownload() && src.GetHasFile() {
+				// user wants to download, we haven't downloaded yet, the source has the file,
+				// and the source is unable to be downloaded. this means the source doesn't support
+				// downloading samples
+				log.Printf("Unable to download %s from %s: Unsupported\n", hash, src.GetName())
 			}
 		}
 
