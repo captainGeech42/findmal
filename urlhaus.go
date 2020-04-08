@@ -28,7 +28,7 @@ func (src *URLhaus) FindFile(sample *Sample) {
 	// urlhaus supports md5 or sha256
 	key := ""
 	hash := ""
-	if sample.MD5!= "" {
+	if sample.MD5 != "" {
 		key = "md5_hash"
 		hash = sample.MD5
 	} else if sample.SHA256 != "" {
