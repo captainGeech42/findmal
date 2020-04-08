@@ -58,6 +58,12 @@ func addSources() {
 	if configHasKey("HA_API_KEY") {
 		sources = append(sources, &HybridAnalysis{MalwareSource{Name: "Hybrid Analysis"}})
 	}
+	
+	// URLhaus
+	// MD5 or SHA256 only
+	if configHasKey("USE_URLHAUS") {
+		sources = append(sources, &URLhaus{MalwareSource{Name: "URLhaus"}})
+	}
 }
 
 func getSamples(hashes []string) []SearchResult {
