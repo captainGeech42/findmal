@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -19,9 +20,6 @@ type VirusTotal struct {
 // FindFile implementation for VT
 // https://developers.virustotal.com/v3.0/reference#file-info
 func (src *VirusTotal) FindFile(sample *Sample) {
-	// can't download files from VT, too much $$$, rip
-	src.CanDownload = false
-
 	// default not found
 	src.HasFile = false
 
@@ -35,6 +33,11 @@ func (src *VirusTotal) FindFile(sample *Sample) {
 		return
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode == 429 {
+		log.Println("API request quota for VT has been exceeded")
+		return
+	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -53,6 +56,7 @@ func (src *VirusTotal) FindFile(sample *Sample) {
 	// if there is a top level 'error' key, the file doesn't exist
 	if _, ok := jsonData["data"]; ok {
 		src.HasFile = true
+		src.CanDownload = true
 		src.URL = fmt.Sprintf("https://www.virustotal.com/gui/file/%s/details", sample.UserHash)
 
 		// save hashes
@@ -70,7 +74,95 @@ func (src *VirusTotal) FindFile(sample *Sample) {
 }
 
 // DownloadFile implementation for VT
-// Not able to download files
+// https://developers.virustotal.com/v3.0/reference#files-download-url
 func (src *VirusTotal) DownloadFile(sample Sample) bool {
-	return false
+	// start generating the ZIP file
+	postData := []byte(fmt.Sprintf(`{"data":{"password":"infected","hashes":["%s"]}}`, sample.UserHash))
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", "https://www.virustotal.com/api/v3/intelligence/zip_files", bytes.NewBuffer(postData))
+	req.Header.Add("x-apikey", config["VT_API_KEY"].(string))
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Error when contacting VT: " + err.Error())
+		return false
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 403 {
+		log.Println("API key isn't licensed for VT Intelligence")
+		return false
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println("Failed to get bytes from VT response: " + err.Error())
+		return false
+	}
+
+	zipID := strings.Trim(string(gjson.GetBytes(body, "data.id").Raw), "\"")
+	log.Printf("VT Zip ID: %s\n", zipID)
+
+	// wait for ZIP file to be ready to download
+	url := fmt.Sprintf("https://www.virustotal.com/api/v3/intelligence/zip_files/%s", zipID)
+	req, err = http.NewRequest("GET", url, nil)
+	req.Header.Add("x-apikey", config["VT_API_KEY"].(string))
+	zipReady := false
+	for !zipReady {
+		resp, err = client.Do(req)
+		if err != nil {
+			log.Println("Error when contacting VT: " + err.Error())
+			return false
+		}
+
+		body, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Println("Failed to get bytes from VT response: " + err.Error())
+			return false
+		}
+
+		status := strings.Trim(string(gjson.GetBytes(body, "data.attributes.status").Raw), "\"")
+		if status == "finished" {
+			zipReady = true
+			log.Println("ZIP file ready")
+		}
+	}
+
+	// download zip file
+	req, err = http.NewRequest("GET", fmt.Sprintf("https://www.virustotal.com/api/v3/intelligence/zip_files/%s/download_url", zipID), nil)
+	req.Header.Add("x-apikey", config["VT_API_KEY"].(string))
+	resp, err = client.Do(req)
+	if err != nil {
+		log.Println("Error when contacting VT: " + err.Error())
+		return false
+	}
+	defer resp.Body.Close()
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println("Failed to get bytes from VT response: " + err.Error())
+		return false
+	}
+
+	downloadURL := strings.Trim(string(gjson.GetBytes(body, "data").Raw), "\"")
+	log.Println(downloadURL)
+	req, err = http.NewRequest("GET", downloadURL, nil)
+	resp, err = client.Do(req)
+	if err != nil {
+		log.Println("Error when contacting VT: " + err.Error())
+		return false
+	}
+	defer resp.Body.Close()
+
+	body, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println("Failed to get bytes from VT response: " + err.Error())
+		return false
+	}
+
+	err = ioutil.WriteFile(fmt.Sprintf("%s.zip", sample.UserHash), body, 0644)
+	if err != nil {
+		log.Println("Failed to save ZIP from VT to disk: " + err.Error())
+		return false
+	}
+	return true
 }
