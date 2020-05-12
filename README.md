@@ -5,7 +5,7 @@ A tool to find/download malware samples from various public repositories
 
 Currently supports:
 
-* VirusTotal (search only)
+* VirusTotal (search, download via VT Intelligence)
 * Hybrid Analysis (search only, download coming soon)
 * MalwareBazaar (search and download)
 * URLhaus (search and download)
@@ -79,6 +79,8 @@ When downloading a sample (by providing the `-download` argument), the sample is
 Sign in to [VirusTotal](https://www.virustotal.com/), click on your name (top-right corner), select `API key`.
 
 Put your key in the config file as the `VT_API_KEY` value.
+
+Downloading is only supported if you are a VT Intelligence member (using the `/zip_files` endpoints)
 
 ### Hybrid Analysis
 Go to your [profile page](https://www.hybrid-analysis.com/my-account?tab=%23api-key-tab) and click `Create API key`.
