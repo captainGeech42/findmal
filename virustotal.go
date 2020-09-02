@@ -101,7 +101,6 @@ func (src *VirusTotal) DownloadFile(sample Sample) bool {
 	}
 
 	zipID := strings.Trim(string(gjson.GetBytes(body, "data.id").Raw), "\"")
-	log.Printf("VT Zip ID: %s\n", zipID)
 
 	// wait for ZIP file to be ready to download
 	url := fmt.Sprintf("https://www.virustotal.com/api/v3/intelligence/zip_files/%s", zipID)
@@ -124,7 +123,6 @@ func (src *VirusTotal) DownloadFile(sample Sample) bool {
 		status := strings.Trim(string(gjson.GetBytes(body, "data.attributes.status").Raw), "\"")
 		if status == "finished" {
 			zipReady = true
-			log.Println("ZIP file ready")
 		}
 	}
 
@@ -144,7 +142,6 @@ func (src *VirusTotal) DownloadFile(sample Sample) bool {
 	}
 
 	downloadURL := strings.Trim(string(gjson.GetBytes(body, "data").Raw), "\"")
-	log.Println(downloadURL)
 	req, err = http.NewRequest("GET", downloadURL, nil)
 	resp, err = client.Do(req)
 	if err != nil {
